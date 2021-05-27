@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine as builder
+FROM golang:1.10-alpine as builder
 WORKDIR /go/src/github.com/BotBotMe/botbot-bot
 
 RUN apk add --no-cache git
@@ -11,6 +11,8 @@ WORKDIR /app
 
 RUN apk add --no-cache ca-certificates
 
-USER 1000
+RUN addgroup -S app && adduser -S -G app app
+USER app
+
 COPY --from=builder /go/src/github.com/BotBotMe/botbot-bot/botbot-bot .
-ENTRYPOINT ["./botbot-bot", "--logtostderr"]
+ENTRYPOINT ["./botbot-bot", "--logtostderr=1", "--stderrthreshold=0", "--v=2"]
